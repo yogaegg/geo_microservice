@@ -21,26 +21,27 @@ async def get_token(database:str, term:str):
 
         return response.text
 
+async def get_content(database:str,query_key:str, web_env:str):
+    async with httpx.AsyncClient() as client:
+        response = await client.get(base_url+f"efetch.fcgi?db={database}&query_key={query_key}&WebEnv={web_env}&retmax=20")
+        return response.text
+
 @app.get("/search/{database}&{term}")
 async def root(background_tasks:BackgroundTasks,database:str, term:str):
-    response = await get_token(database, term)
-    print(response)
-    res_tree = ET.fromstring(response)
-    print(res_tree.find("QueryKey").text)
-    print(res_tree.find("WebEnv").text)
-
-
-    # for child in response:
-    #     print(child)
-
+    query_response = await get_token(database, term)
+    # print(query_response)
+    res_tree = ET.fromstring(query_response)
+    query_key = res_tree.find("QueryKey").text
+    web_env = res_tree.find("WebEnv").text
+    print(query_key,web_env)
+    content_response = await get_content(database,query_key,web_env)
+    # print(content_response)
     # background_tasks.add_task(thread_pool.submit,save_to_cache)
-    return response
+    return content_response
         # Response(content=response, media_type="application/xml")
 
 
-@app.get("/hello/{name}")
-async def search(name: str):
-    return {"message": f"Hello {name}"}
+
 
 
 @app.on_event("shutdown")
