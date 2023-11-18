@@ -1,13 +1,40 @@
 <!DOCTYPE html> 
-<html> 
+<html>
 <head> 
   <meta charset="UTF-8"> 
-  <title>Page Title</title> 
+  <title>Page Title</title>
+
 </head> 
-<body> 
+<body>
+
    <h1>Please type your search key word</h1>
-   <input title="text" />
 
 
-</body> 
+   <p >term</p>
+   <input id="term" type="text"/>
+
+   <select id="operation">
+      <option value="1" selected="selected" >AND</option>
+      <option value="2" >OR</option>
+      <option value="3">NOT</option>
+    </select>
+    <input type="text">
+
+
+
+   <label>
+       <p>database</p>
+       <input id="database" type="text" />
+   </label>
+   <button onclick="submit()">Submit</button>
+
+</body>
+<script >
+        function submit(){
+            const database = document.getElementById('database').value;
+            const term = document.getElementById('term').value;
+            let select = document.getElementById('operation')
+            console.log(select.options[select.selectedIndex].text);
+        }
+    </script>
 </html> 
