@@ -6,35 +6,95 @@
 
 </head> 
 <body>
+    <div id="term-container">
+        <div>
+            <h1>Please type your search key word</h1>
+            <h3>Term</h3>
+            <input class="term" type="text"/>
+            <a class="myAnchor" href="#">&nbsp add term</a>
+        </div>
 
-   <h1>Please type your search key word</h1>
+        <div>
+           <select class="operation">
+              <option value="1" selected="selected" >AND</option>
+              <option value="2" >OR</option>
+              <option value="3">NOT</option>
+           </select>
+           <input class="term" type="text">
+           <a class="myAnchor" href="#" >&nbsp add term</a>
+        </div>
+    </div>
+    <div>
+        <h3>Database</h3>
+        <input id="database" type="text" />
 
-
-   <p >term</p>
-   <input id="term" type="text"/>
-
-   <select id="operation">
-      <option value="1" selected="selected" >AND</option>
-      <option value="2" >OR</option>
-      <option value="3">NOT</option>
-    </select>
-    <input type="text">
-
-
-
-   <label>
-       <p>database</p>
-       <input id="database" type="text" />
-   </label>
-   <button onclick="submit()">Submit</button>
-
+        <button onclick="submit()">Submit</button>
+    </div>
 </body>
 <script >
-        function submit(){
-            const database = document.getElementById('database').value;
-            const term = document.getElementById('term').value;
-            let select = document.getElementById('operation')
-            console.log(select.options[select.selectedIndex].text);
+
+    function submit(){
+        const database = document.getElementById('database').value;
+        const terms = document.querySelectorAll('.term');
+        const operations = document.querySelectorAll('.operation');
+        let term = '';
+        console.log(terms,operations);
+        terms.forEach((termItem,index)=>{
+            const termValue = termItem.value;
+            if (index == 0) term += termValue;
+            else {
+                const oprationValue = operations[index-1].options[operations[index-1].selectedIndex].text;
+                term += (`+${oprationValue}+${termValue}`)
+            }
+
+        });
+        console.log(term);
+        fetch(`http://localhost:8000/search/${database}&${term}`)
+            .then(response=>response.text())
+            .then(res=>console.log(res));
+    }
+
+    function createNewElements() {
+        const div = document.createElement('div');
+
+        const select = document.createElement('select');
+        select.className = 'operation';
+        const options = [
+            { value: '1', text: 'AND', selected: true },
+            { value: '2', text: 'OR' },
+            { value: '3', text: 'NOT' }
+        ];
+        options.forEach(opt => {
+            const option = document.createElement('option');
+            option.value = opt.value;
+            option.textContent = opt.text;
+            if (opt.selected) option.setAttribute('selected', 'selected');
+            select.appendChild(option);
+        });
+
+        const input = document.createElement('input');
+        input.className = 'term';
+        input.type = 'text';
+
+        const a = document.createElement('a');
+        a.textContent = ' add term';
+        a.href = '#';
+
+        div.appendChild(select);
+        div.appendChild(input);
+        div.appendChild(a);
+
+        return div;
+    }
+
+
+    document.getElementById('term-container').addEventListener('click', function(event) {
+        if (event.target.tagName === 'A') {
+            event.preventDefault();
+            const contentDiv = document.getElementById('term-container');
+            contentDiv.appendChild(createNewElements());
         }
+
+    });
     </script>
 </html> 

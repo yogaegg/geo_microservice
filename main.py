@@ -1,9 +1,17 @@
 from fastapi import FastAPI, Response, Request, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
 import httpx
 import xml.etree.ElementTree as ET
 from concurrent.futures import ThreadPoolExecutor
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+    allow_methods=['*'],
+    allow_headers=['*']
+)
+
 base_url = 'https://eutils.ncbi.nlm.nih.gov/entrez/eutils/'
 url = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=gds&term=GPL96[ACCN]+AND+gse[ETYP]+AND+cel[suppFile]&retmax=5000&usehistory=y"
 
@@ -27,7 +35,7 @@ async def get_content(database:str,query_key:str, web_env:str):
         return response.text
 
 @app.get("/search/{database}&{term}")
-async def root(background_tasks:BackgroundTasks,database:str, term:str):
+async def getDetails(background_tasks:BackgroundTasks,database:str, term:str):
     query_response = await get_token(database, term)
     # print(query_response)
     res_tree = ET.fromstring(query_response)
