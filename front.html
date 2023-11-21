@@ -14,15 +14,6 @@
             <a class="myAnchor" href="#">&nbsp add term</a>
         </div>
 
-        <div>
-           <select class="operation">
-              <option value="1" selected="selected" >AND</option>
-              <option value="2" >OR</option>
-              <option value="3">NOT</option>
-           </select>
-           <input class="term" type="text">
-           <a class="myAnchor" href="#" >&nbsp add term</a>
-        </div>
     </div>
     <div>
         <h3>Database</h3>
@@ -41,7 +32,7 @@
         console.log(terms,operations);
         terms.forEach((termItem,index)=>{
             const termValue = termItem.value;
-            if (index == 0) term += termValue;
+            if (index === 0) term += termValue;
             else {
                 const oprationValue = operations[index-1].options[operations[index-1].selectedIndex].text;
                 term += (`+${oprationValue}+${termValue}`)
@@ -50,7 +41,7 @@
         });
         console.log(term);
         fetch(`http://localhost:8000/search/${database}&${term}`)
-            .then(response=>response.text())
+            .then(response=>response.json())
             .then(res=>console.log(res));
     }
 
